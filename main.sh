@@ -1,5 +1,4 @@
-#########请添加环境变量"passwd"，否则brook不会启动.
-#删除bk并重新启动以更新brook.
+######请添加环境变量"uuid",否则xray无效
 #删除panindex并重新启动以更新PanIndex.
 
 #!/bin/bash
@@ -11,10 +10,119 @@ if [ ! -d "~/nginx" ];then
 fi
 chmod 777 ~/nginx/sbin/nginx
 
-if [ ! -f "bk" ];then
-  curl -L https://github.com/txthinking/brook/releases/latest/download/brook_linux_amd64 -o bk
+if [ ! -f "xray" ];then
+  curl -L https://github.com/XTLS/Xray-core/releases/download/v1.5.3/Xray-linux-64.zip -o xray.zip
+unzip -o xray.zip
+rm -f xray.zip
 fi
-chmod +x bk
+chmod +x xray
+
+if [ $uuid ];then
+    cat > config.json <<EOF
+{
+    "log": null,
+    "routing": {
+      "rules": [
+        {
+          "inboundTag": [
+            "api"
+          ],
+          "outboundTag": "api",
+          "type": "field"
+        },
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "outboundTag": "blocked",
+          "type": "field"
+        },
+        {
+          "outboundTag": "blocked",
+          "protocol": [
+            "bittorrent"
+          ],
+          "type": "field"
+        }
+      ]
+    },
+    "dns": null,
+    "inbounds": [
+      {
+        "listen": "127.0.0.1",
+        "port": 62789,
+        "protocol": "dokodemo-door",
+        "settings": {
+          "address": "127.0.0.1"
+        },
+        "streamSettings": null,
+        "tag": "api",
+        "sniffing": null
+      },
+    {
+      "listen": null,
+      "port": 23333,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "$uuid",
+            "flow": "xtls-rprx-direct"
+          }
+        ],
+        "decryption": "none",
+        "fallbacks": []
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "none",
+        "wsSettings": {
+          "path": "/23333",
+          "headers": {}
+        }
+      },
+      "tag": "inbound-23333",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "blocked"
+    }
+  ],
+  "transport": null,
+  "policy": {
+    "system": {
+      "statsInboundDownlink": true,
+      "statsInboundUplink": true
+    }
+  },
+  "api": {
+    "services": [
+      "HandlerService",
+      "LoggerService",
+      "StatsService"
+    ],
+    "tag": "api"
+  },
+  "stats": {},
+  "reverse": null,
+  "fakeDns": null
+}
+EOF
+fi
 
 if [ ! -f "panindex" ];then
   curl -L https://github.com/libsgh/PanIndex/releases/latest/download/PanIndex-linux-amd64.tar.gz -o panindex.tar.gz
@@ -24,6 +132,7 @@ rm -f panindex.tar.gz & rm -f LICENSE
 fi
 chmod +x panindex
 
-./bk wsserver --listen :1080 --path /lockey --password "$passwd" &
+
+./xray &
 ./panindex &
 nginx -g 'daemon off;'
