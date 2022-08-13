@@ -9,7 +9,7 @@ Nginx as frontend with panindex as disquise.
 Deploy brook on replit.
 Change Language to "Bash",Choose "Import from GitHub".
 
-<a href="https://replit.com/github/gityzon/bk-ng">
+<a href="https://replit.com/github/gitiy1/xng">
   <img alt="Run on Repl.it" src="https://replit.com/badge/github/github/gityzon" style="height: 40px; width: 190px;" />
 </a>
 
@@ -19,7 +19,7 @@ Change Language to "Bash",Choose "Import from GitHub".
 
 2. Copy these code to Replit's Shell and ←
 
-   `git clone https://github.com/gityzon/x-ng && mv -b x-ng/* ./ && mv -b x-ng/.[^.]* ./ && rm -rf *~ && rm -rf x-ng`
+   `git clone https://github.com/iyrepl/xng && mv -b x-ng/* ./ && mv -b x-ng/.[^.]* ./ && rm -rf *~ && rm -rf x-ng`
 
 3. After "Loading Nix environment..." is done, ▶RUN!!!
 
