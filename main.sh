@@ -77,11 +77,11 @@ if [ $uuid ];then
         "network": "ws",
         "security": "none",
         "wsSettings": {
-          "path": "/23333",
+          "path": "/iyreplsc233",
           "headers": {}
         }
       },
-      "tag": "inbound-23333",
+      "tag": "inbound-iyreplsc233",
       "sniffing": {
         "enabled": true,
         "destOverride": [
